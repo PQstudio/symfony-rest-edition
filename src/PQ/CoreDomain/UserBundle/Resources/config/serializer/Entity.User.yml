@@ -1,0 +1,12 @@
+PQ\CoreDomain\UserBundle\Entity\User:
+    exclusion_policy: ALL
+    properties:
+        id:
+            expose: true
+            type: integer
+            groups: [GET]
+        currentPassword:
+            expose: true
+            serialized_name: currentPassword
+            type: string
+            groups: [PATCH]

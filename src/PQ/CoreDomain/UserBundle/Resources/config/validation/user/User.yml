@@ -1,0 +1,4 @@
+#PQ\CoreDomain\UserBundle\Entity\User:
+    #properties:
+        #plainPassword:
+            #errorPath: password

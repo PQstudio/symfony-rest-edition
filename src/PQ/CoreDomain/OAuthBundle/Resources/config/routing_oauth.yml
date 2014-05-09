@@ -1,0 +1,9 @@
+pq_oauth_server_auth_invalidate_token:
+    pattern: /oauth/v2/token/invalidate
+    defaults: { _controller: PQOAuthBundle:Security:invalidateToken }
+    methods: [PUT]
+
+pq_oauth_server_auth_check_token:
+    pattern: /oauth/v2/token/check
+    defaults: { _controller: PQOAuthBundle:Security:checkToken }
+    methods: [POST]

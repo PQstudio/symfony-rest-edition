@@ -1,0 +1,29 @@
+FOS\UserBundle\Model\User:
+    exclusion_policy: ALL
+    properties:
+        #id:
+            #expose: true
+            #type: integer
+            #groups: [GET, PATCH]
+        username:
+            expose: false
+            serialized_name: username
+            groups: [GET]
+        plainPassword:
+            expose: true
+            serialized_name: password
+            type: string
+            groups: [POST, PATCH]
+        email:
+            expose: true
+            groups: [GET, PATCH, POST]
+        enabled:
+            expose: false
+            groups: [GET]
+        last_login:
+            expose: true
+            groups: [GET]
+        roles:
+            expose: true
+            groups: [GET]
+

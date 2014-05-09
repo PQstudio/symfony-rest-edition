@@ -1,0 +1,10 @@
+pq_oauth:
+    resource: "@PQOAuthBundle/Resources/config/routing_oauth.yml"
+
+fos_oauth_server_token:
+    resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"
+
+pq_user:
+    type: rest
+    resource: "@PQUserBundle/Resources/config/routing_user.yml"
+    prefix: /api/v1

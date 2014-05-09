@@ -1,0 +1,3 @@
+pq_user:
+    type:     rest
+    resource: PQ\CoreDomain\UserBundle\Controller\UserController

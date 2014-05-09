@@ -1,0 +1,3 @@
+oinpharmamojlek_medication:
+    type:     rest
+    resource: Acme\DemoBundle\Controller\DemoController

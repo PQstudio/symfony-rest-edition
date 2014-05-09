@@ -1,0 +1,15 @@
+/web/bundles/
+/app/bootstrap.php.cache
+/app/cache/*
+/app/config/parameters.yml
+/app/logs/*
+!/app/cache/.gitkeep
+!/app/logs/.gitkeep
+/app/sqlite.db.cache
+/vendor/
+/bin/
+/.phpcomplete_extended/
+/imports*
+/ads*
+/.vagrant/
+dump.rdb

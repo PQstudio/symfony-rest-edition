@@ -1,0 +1,25 @@
+parameters:
+    user_repository.doctrine.bare.class: PQ\CoreDomain\UserBundle\Repository\User\BareDoctrineUserRepository
+    user_repository.doctrine.class: PQ\CoreDomain\UserBundle\Repository\User\DoctrineUserRepository
+    user_entity: PQ\CoreDomain\UserBundle\Entity\User
+
+services:
+# User repository
+    user_repository.doctrine:
+        class: %user_repository.doctrine.class%
+        arguments: 
+            em: "@doctrine.orm.entity_manager"
+            repo: "@user_repository.doctrine.bare"
+            userManager: "@fos_user.user_manager"
+            tokenManager: "@fos_user.util.token_generator"
+            acl: "@pq.acl"
+            userEntity: %user_entity%
+
+    user_repository:
+        alias: user_repository.doctrine
+
+    user_repository.doctrine.bare:
+        class: %user_repository.doctrine.bare.class%
+        factory_service: "doctrine.orm.entity_manager"
+        factory_method: "getRepository"
+        arguments: [%user_entity%]
