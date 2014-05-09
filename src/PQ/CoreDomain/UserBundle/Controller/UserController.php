@@ -10,6 +10,8 @@ use PQ\CoreDomain\UserBundle\Entity\User;
 use PQ\CoreDomain\UserBundle\Event\UserEvent;
 use PQ\CoreDomain\UserBundle\Event\UserEvents;
 
+use Mailgun\Mailgun;
+
 
 class UserController extends PQRestController
 {
@@ -19,9 +21,28 @@ class UserController extends PQRestController
      */
     public function getUsersAction(Request $request)
     {
+        //$key = $this->container->getParameter('mailgun.key');
+        //$mailgun = new Mailgun($key);
+
+     $message = \Swift_Message::newInstance()
+        ->setSubject('Hello Email')
+        ->setFrom('send@example.com')
+        ->setTo('gregory90@gmail.com')
+        ->setBody(
+            'boody'
+        )
+    ;
+    $this->get('mailer')->send($message);
+        //$domain = $this->container->getParameter('mailgun.domain');
+        //$mailgun->sendMessage($domain, array(
+            //'from' => "send@example.com",
+            //'to' =>"gregory90@gmail.com"
+        //), $message->toString());
         if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
             $this->permissionDenied();
         }
+
+
 
         $this->setOffsetAndLimit($request);
 

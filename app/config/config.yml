@@ -46,8 +46,8 @@ doctrine:
         auto_mapping: true
 
 # Swiftmailer Configuration
-#swiftmailer:
-    #transport: "%mailer_transport%"
+swiftmailer:
+    transport: "mailgun" #"%mailer_transport%"
     #host:      "%mailer_host%"
     #username:  "%mailer_user%"
     #password:  "%mailer_password%"
@@ -117,3 +117,7 @@ snc_redis:
 pq_rate_limit:
     limits:
         - { path: ^/api/v1/users, limit: 15, time: 3300}
+
+cspoo_swiftmailer_mailgun:
+    key: key-6x9z6r91d9nhnjetj65hmb0ckftniwc6
+    domain: sandbox6529c37d76f547afb23f86144351cb95.mailgun.org

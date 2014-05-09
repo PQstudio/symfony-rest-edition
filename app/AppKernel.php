@@ -22,6 +22,8 @@ class AppKernel extends Kernel
 
             new Snc\RedisBundle\SncRedisBundle(),
 
+            new cspoo\Swiftmailer\MailgunBundle\cspooSwiftmailerMailgunBundle(),
+
             new FOS\RestBundle\FOSRestBundle(),
             new FOS\OAuthServerBundle\FOSOAuthServerBundle(),
             new FOS\UserBundle\FOSUserBundle(),
