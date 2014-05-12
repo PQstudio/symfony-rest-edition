@@ -24,6 +24,7 @@
         "friendsofsymfony/oauth-server-bundle": "dev-master",
         "snc/redis-bundle": "1.1.x-dev",
         "cspoo/swiftmailer-mailgun-bundle": "dev-master",
+        "dmishh/recaptcha-bundle": "1.0.*",
         "pqstudio/rest-utility-bundle": "dev-master",
         "pqstudio/rate-limit-bundle": "dev-master"
     },
@@ -31,7 +32,6 @@
     },
     "scripts": {
         "post-root-package-install": [
-            "SymfonyStandard\\Composer::hookInstallAcmeDemoBundle"
         ],
         "post-install-cmd": [
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",

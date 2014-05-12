@@ -1,6 +1,10 @@
 pq_oauth:
     resource: "@PQOAuthBundle/Resources/config/routing_oauth.yml"
 
+pq_ratelimit:
+    resource: "@PQstudioRateLimitBundle/Resources/config/routing.yml"
+    prefix: /api/v1
+
 fos_oauth_server_token:
     resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"
 

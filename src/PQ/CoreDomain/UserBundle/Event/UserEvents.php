@@ -19,7 +19,12 @@ final class UserEvents
     const Register = 'pq.user.register';
 
     /**
-     * Event after successfull password change
+     * Event after successfull password reset request
      */
-    const PasswordChangeGenerate = 'pq.user.passwordChange.generate';
+    const ForgotPasswordRequest = 'pq.user.forgot.password.request';
+
+    /**
+     * Event after successfull password reset change
+     */
+    const ForgotPasswordChanged = 'pq.user.forgot.password.changed';
 }

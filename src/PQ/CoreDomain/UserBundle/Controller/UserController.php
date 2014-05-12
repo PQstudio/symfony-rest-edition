@@ -24,15 +24,15 @@ class UserController extends PQRestController
         //$key = $this->container->getParameter('mailgun.key');
         //$mailgun = new Mailgun($key);
 
-     $message = \Swift_Message::newInstance()
-        ->setSubject('Hello Email')
-        ->setFrom('send@example.com')
-        ->setTo('gregory90@gmail.com')
-        ->setBody(
-            'boody'
-        )
-    ;
-    $this->get('mailer')->send($message);
+     //$message = \Swift_Message::newInstance()
+        //->setSubject('Hello Email')
+        //->setFrom('send@example.com')
+        //->setTo('gregory90@gmail.com')
+        //->setBody(
+            //'boody'
+        //)
+    //;
+    //$this->get('mailer')->send($message);
         //$domain = $this->container->getParameter('mailgun.domain');
         //$mailgun->sendMessage($domain, array(
             //'from' => "send@example.com",
@@ -80,6 +80,127 @@ class UserController extends PQRestController
             ['GET', 'Default'],
             true
         );
+
+        return $this->handleView($view);
+    }
+
+    public function putUsersForgotpasswordAction(Request $request)
+    {
+        $email = $request->request->get('email');
+        $user = $this->get('user_repository')->findByEmail($email);
+
+        $view = $this->view();
+
+        if(!$user instanceof User) {
+            //$code = 400;
+            //$this->meta->setStatusCode($code)
+                       //->setError('email_doesnt_exist')
+                       //->setErrorMessage('Providen email does not exist in the database')
+            //;
+            //$view->setData(['meta' => $this->meta->build()])
+                 //->setStatusCode($code)
+            //;
+            $code = 204;
+            $view
+                 ->setStatusCode($code)
+            ;
+            return $this->handleView($view);
+        }
+
+        $user->setChangePassToken($this->get('fos_user.util.token_generator')->generateToken());
+        $user->setChangePassTokenDate(new \DateTime('now'));
+
+        $this->get('user_repository')->update($user);
+
+        $this->get('event_dispatcher')->dispatch(UserEvents::ForgotPasswordRequest, new UserEvent($user));
+
+        $code = 204;
+        $view
+             ->setStatusCode($code)
+        ;
+
+        return $this->handleView($view);
+    }
+
+    public function patchUsersChangepasswordAction(Request $request)
+    {
+        $token = $request->request->get('token');
+        $password = $request->request->get('password');
+
+        $user = $this->get('user_repository')->findByChangePassToken($token);
+
+        $view = $this->view();
+
+        if(!$user instanceof User) {
+            $code = 400;
+            $this->meta->setStatusCode($code)
+                       ->setError('token_doesnt_exist')
+                       ->setErrorMessage('Providen token does not exist in the database')
+            ;
+            $view->setData($this->meta->build())
+                 ->setStatusCode($code)
+            ;
+            return $this->handleView($view);
+        }
+
+        if($password === null) {
+            $code = 400;
+            $this->meta->setStatusCode($code)
+                       ->setError('password_not_set')
+                       ->setErrorMessage('There were no password set')
+            ;
+            $view->setData($this->meta->build())
+                 ->setStatusCode($code)
+            ;
+            return $this->handleView($view);
+        }
+
+        $date = new \DateTime('now');
+        $date->modify('-10 minutes');
+        if($user->getChangePassTokenDate() <= $date) {
+            $code = 422;
+            $this->meta->setStatusCode($code)
+                       ->setError('token_time_expired')
+                       ->setErrorMessage('Token time expired')
+            ;
+            $view->setData($this->meta->build())
+                 ->setStatusCode($code)
+            ;
+
+            $user->setChangePassToken(null);
+            $user->setChangePassTokenDate(null);
+
+            $this->get('user_repository')->update($user);
+
+            $this->get('event_dispatcher')->dispatch(UserEvents::ForgotPasswordChanged, new UserEvent($user));
+
+            return $this->handleView($view);
+        }
+
+        $user->setPlainPassword($password);
+        $validation = $this->validate($user, ['Profile']);
+
+        if($validation !== true) {
+            $code = 400;
+            $this->meta->setStatusCode($code)
+                       ->setError('validation_error')
+                       ->setErrorMessage('There was a problem with request validation')
+            ;
+            $view->setData(['meta' => $this->meta->build(), 'user' => $validation])
+                 ->setStatusCode($code)
+            ;
+            return $this->handleView($view);
+        }
+
+        $user->setChangePassToken(null);
+        $user->setChangePassTokenDate(null);
+
+        $this->get('user_repository')->update($user);
+
+        $code = 204;
+        $view
+             ->setStatusCode($code)
+        ;
 
         return $this->handleView($view);
     }
@@ -263,121 +384,6 @@ class UserController extends PQRestController
         //return $this->handleView($view);
     //}
 
-    //public function postUsersPasswordGenerateAction(Request $request)
-    //{
-        //$email = $request->request->get('email');
-        //$user = $this->get('user_repository')->findByEmail($email);
-
-        //$view = $this->view();
-
-        //if(!$user instanceof User) {
-            //$code = 400;
-            //$this->meta->setStatusCode($code)
-                       //->setError('email_doesnt_exist')
-                       //->setErrorMessage('Providen email does not exist in the database')
-            //;
-            //$view->setData(['meta' => $this->meta->build()])
-                 //->setStatusCode($code)
-            //;
-            //return $this->handleView($view);
-        //}
-
-        //$user->setChangePassToken($this->get('fos_user.util.token_generator')->generateToken());
-        //$user->setChangePassTokenDate(new \DateTime('now'));
-
-        //$this->get('user_repository')->update($user);
-
-        //$this->get('event_dispatcher')->dispatch(UserEvents::PasswordChangeGenerate, new UserEvent($user));
-
-        //$code = 204;
-        //$this->meta->setStatusCode($code);
-        //$view->setData(['meta' => $this->meta->build()])
-             //->setStatusCode($code)
-        //;
-
-        //return $this->handleView($view);
-    //}
-
-    //public function postUsersPasswordChangeAction(Request $request)
-    //{
-        //$token = $request->request->get('token');
-        //$password = $request->request->get('password');
-
-        //$user = $this->get('user_repository')->findByChangePassToken($token);
-
-        //$view = $this->view();
-
-        //if(!$user instanceof User) {
-            //$code = 400;
-            //$this->meta->setStatusCode($code)
-                       //->setError('token_doesnt_exist')
-                       //->setErrorMessage('Providen token does not exist in the database')
-            //;
-            //$view->setData(['meta' => $this->meta->build()])
-                 //->setStatusCode($code)
-            //;
-            //return $this->handleView($view);
-        //}
-
-        //if($password === null) {
-            //$code = 400;
-            //$this->meta->setStatusCode($code)
-                       //->setError('password_not_set')
-                       //->setErrorMessage('There were no password set')
-            //;
-            //$view->setData(['meta' => $this->meta->build()])
-                 //->setStatusCode($code)
-            //;
-            //return $this->handleView($view);
-        //}
-
-        //$date = new \DateTime('now');
-        //$date->modify('-10 minutes');
-        //if($user->getChangePassTokenDate() <= $date) {
-            //$code = 400;
-            //$this->meta->setStatusCode($code)
-                       //->setError('token_time_expired')
-                       //->setErrorMessage('Token time expired')
-            //;
-            //$view->setData(['meta' => $this->meta->build()])
-                 //->setStatusCode($code)
-            //;
-
-            //$user->setChangePassToken(null);
-            //$user->setChangePassTokenDate(null);
-
-            //$this->get('user_repository')->update($user);
-
-            //return $this->handleView($view);
-        //}
-
-        //$user->setPlainPassword($password);
-        //$validation = $this->validate($user, ['Profile']);
-
-        //if($validation !== true) {
-            //$code = 400;
-            //$this->meta->setStatusCode($code)
-                       //->setError('validation_error')
-                       //->setErrorMessage('There was a problem with request validation')
-            //;
-            //$view->setData(['meta' => $this->meta->build(), 'user' => $validation])
-                 //->setStatusCode($code)
-            //;
-            //return $this->handleView($view);
-        //}
-
-        //$user->setChangePassToken(null);
-
-        //$this->get('user_repository')->update($user);
-
-        //$code = 204;
-        //$this->meta->setStatusCode($code);
-        //$view->setData(['meta' => $this->meta->build()])
-             //->setStatusCode($code)
-        //;
-
-        //return $this->handleView($view);
-    //}
 
 
     /**

@@ -31,6 +31,9 @@ security:
             fos_oauth:  true
 
     access_control:
-        - { path: ^/api/v1/users, roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] , methods: [POST]}
+        - { path: ^/api/v1/users$, roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] , methods: [POST]}
+        - { path: ^/api/v1/users/forgotpassword$, roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] , methods: [PUT]}
+        - { path: ^/api/v1/users/changepassword$, roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] , methods: [PATCH]}
+        - { path: ^/api/v1/rateLimit/remove$, roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] , methods: [POST]}
         - { path: ^/api, roles: [ IS_AUTHENTICATED_FULLY ] }
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
