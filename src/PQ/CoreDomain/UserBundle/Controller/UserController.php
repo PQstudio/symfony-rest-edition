@@ -21,28 +21,9 @@ class UserController extends PQRestController
      */
     public function getUsersAction(Request $request)
     {
-        //$key = $this->container->getParameter('mailgun.key');
-        //$mailgun = new Mailgun($key);
-
-     //$message = \Swift_Message::newInstance()
-        //->setSubject('Hello Email')
-        //->setFrom('send@example.com')
-        //->setTo('gregory90@gmail.com')
-        //->setBody(
-            //'boody'
-        //)
-    //;
-    //$this->get('mailer')->send($message);
-        //$domain = $this->container->getParameter('mailgun.domain');
-        //$mailgun->sendMessage($domain, array(
-            //'from' => "send@example.com",
-            //'to' =>"gregory90@gmail.com"
-        //), $message->toString());
         if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
             $this->permissionDenied();
         }
-
-
 
         $this->setOffsetAndLimit($request);
 
@@ -172,8 +153,6 @@ class UserController extends PQRestController
 
             $this->get('user_repository')->update($user);
 
-            $this->get('event_dispatcher')->dispatch(UserEvents::ForgotPasswordChanged, new UserEvent($user));
-
             return $this->handleView($view);
         }
 
@@ -196,6 +175,8 @@ class UserController extends PQRestController
         $user->setChangePassTokenDate(null);
 
         $this->get('user_repository')->update($user);
+
+        $this->get('event_dispatcher')->dispatch(UserEvents::ForgotPasswordChanged, new UserEvent($user));
 
         $code = 204;
         $view

@@ -27,6 +27,12 @@ twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
 
+jms_di_extra:
+    locations:
+        all_bundles: false
+        bundles: [UserBundle, UtilityBundle]
+        directories: ["%kernel.root_dir%/../src"]
+
 # Doctrine Configuration
 doctrine:
     dbal:
@@ -47,7 +53,9 @@ doctrine:
 
 # Swiftmailer Configuration
 swiftmailer:
-    transport: "mailgun" #"%mailer_transport%"
+    transport: "%mailer_transport%"
+    #delivery_address: gregory90@gmail.com
+    #disable_delivery: true
     #host:      "%mailer_host%"
     #username:  "%mailer_user%"
     #password:  "%mailer_password%"

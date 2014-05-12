@@ -34,6 +34,7 @@ class AppKernel extends Kernel
 
             new PQ\CoreDomain\OAuthBundle\PQOAuthBundle(),
             new PQ\CoreDomain\UserBundle\PQUserBundle(),
+            new PQ\CoreDomain\UtilityBundle\PQUtilityBundle(),
 
         );
 
