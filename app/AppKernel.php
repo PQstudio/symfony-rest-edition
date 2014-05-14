@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
 
             new Snc\RedisBundle\SncRedisBundle(),
+            new Misd\GuzzleBundle\MisdGuzzleBundle(),
 
             new cspoo\Swiftmailer\MailgunBundle\cspooSwiftmailerMailgunBundle(),
             new Dmishh\Bundle\RecaptchaBundle\RecaptchaBundle(),

@@ -25,6 +25,7 @@
         "snc/redis-bundle": "1.1.x-dev",
         "cspoo/swiftmailer-mailgun-bundle": "dev-master",
         "dmishh/recaptcha-bundle": "1.0.*",
+        "misd/guzzle-bundle": "~1.0",
         "pqstudio/rest-utility-bundle": "dev-master",
         "pqstudio/rate-limit-bundle": "dev-master"
     },

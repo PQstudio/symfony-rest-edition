@@ -102,6 +102,45 @@ class DoctrineUserRepository
         return $user;
     }
 
+    public function findByFacebookId($id)
+    {
+        $query = $this->em->createQuery(
+           'SELECT p
+            FROM '.$this->userEntity.' p
+            WHERE p.facebookId = :id
+            '
+        )->setParameter('id', $id);
+
+        $user = $query->getOneOrNullResult();
+        return $user;
+    }
+
+    public function findByGoogleId($id)
+    {
+        $query = $this->em->createQuery(
+           'SELECT p
+            FROM '.$this->userEntity.' p
+            WHERE p.googleId = :id
+            '
+        )->setParameter('id', $id);
+
+        $user = $query->getOneOrNullResult();
+        return $user;
+    }
+
+    public function findByLinkedinId($id)
+    {
+        $query = $this->em->createQuery(
+           'SELECT p
+            FROM '.$this->userEntity.' p
+            WHERE p.linkedinId = :id
+            '
+        )->setParameter('id', $id);
+
+        $user = $query->getOneOrNullResult();
+        return $user;
+    }
+
     public function add(UserInterface $user)
     {
         $user->setConfirmationToken($this->tokenGenerator->generateToken());

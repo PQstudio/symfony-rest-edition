@@ -1,3 +1,11 @@
 #parameters:
+    #pq.oauth.fbtoken_extension.class: "PQ\CoreDomain\OAuthBundle\GrantExtension\FacebookTokenGrantExtension"
 
 #services:
+    #pq.oauth.fbtoken_extension:
+            #class: %pq.oauth.fbtoken_extension.class%
+            #arguments: 
+                #userRepository: @user_repository
+                #httpClient: @guzzle.client
+            #tags:
+                #- { name: fos_oauth_server.grant_extension, uri: 'facebook_token' }

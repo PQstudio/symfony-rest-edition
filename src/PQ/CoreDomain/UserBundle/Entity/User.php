@@ -7,6 +7,16 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  * @ORM\Table("user")
+ * @ORM\AttributeOverrides({
+ *      @ORM\AttributeOverride(name="password",
+ *          column=@ORM\Column(
+ *              name     = "password",
+ *              type     = "string",
+ *              length   = 255,
+ *              nullable = true
+ *          )
+ *      )
+ * })
  */
 class User extends BaseUser
 {
@@ -31,6 +41,48 @@ class User extends BaseUser
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $changePassTokenDate;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="facebook_id", type="string", nullable=true)
+     */
+    private $facebookId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="facebook_access_token", type="string", nullable=true)
+     */
+    private $facebookAccessToken;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="google_id", type="string", nullable=true)
+     */
+    private $googleId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="google_access_token", type="string", nullable=true)
+     */
+    private $googleAccessToken;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="linkedin_id", type="string", nullable=true)
+     */
+    private $linkedinId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="linkedin_access_token", type="string", nullable=true)
+     */
+    private $linkedinAccessToken;
 
     protected $currentPassword;
 
@@ -92,5 +144,65 @@ class User extends BaseUser
     public function getChangePassTokenDate()
     {
         return $this->changePassTokenDate;
+    }
+
+    public function setFacebookId($facebookId)
+    {
+        $this->facebookId = $facebookId;
+    }
+
+    public function getFacebookId()
+    {
+        return $this->facebookId;
+    }
+
+    public function setFacebookAccessToken($facebookAccessToken)
+    {
+        $this->facebookAccessToken = $facebookAccessToken;
+    }
+
+    public function getFacebookAccessToken()
+    {
+        return $this->facebookAccessToken;
+    }
+
+    public function setGoogleId($googleId)
+    {
+        $this->googleId = $googleId;
+    }
+
+    public function getGoogleId()
+    {
+        return $this->googleId;
+    }
+
+    public function setGoogleAccessToken($googleAccessToken)
+    {
+        $this->googleAccessToken = $googleAccessToken;
+    }
+
+    public function getGoogleAccessToken()
+    {
+        return $this->googleAccessToken;
+    }
+
+    public function setLinkedinId($linkedinId)
+    {
+        $this->linkedinId = $linkedinId;
+    }
+
+    public function getLinkedinId()
+    {
+        return $this->linkedinId;
+    }
+
+    public function setLinkedinAccessToken($linkedinAccessToken)
+    {
+        $this->linkedinAccessToken = $linkedinAccessToken;
+    }
+
+    public function getLinkedinAccessToken()
+    {
+        return $this->linkedinAccessToken;
     }
 }
