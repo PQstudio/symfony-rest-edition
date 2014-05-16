@@ -73,14 +73,6 @@ class UserController extends PQRestController
         $view = $this->view();
 
         if(!$user instanceof User) {
-            //$code = 400;
-            //$this->meta->setStatusCode($code)
-                       //->setError('email_doesnt_exist')
-                       //->setErrorMessage('Providen email does not exist in the database')
-            //;
-            //$view->setData(['meta' => $this->meta->build()])
-                 //->setStatusCode($code)
-            //;
             $code = 204;
             $view
                  ->setStatusCode($code)
@@ -411,6 +403,236 @@ class UserController extends PQRestController
         $this->meta->setStatusCode($code);
         $view->setData(['meta' => $this->meta->build()])
              ->setStatusCode($code)
+        ;
+
+        return $this->handleView($view);
+    }
+
+    /**
+     * Finds users linked accounts
+     */
+    public function getUsersLinksAction($id)
+    {
+        $user = $this->get('user_repository')->find($id);
+        $this->exist($user);
+
+        if (false === $this->get('security.context')->isGranted('OWNER', $user)) {
+            $this->permissionDenied();
+        }
+
+        $providers = [];
+        if($user->getFacebookId() != null || $user->getFacebookId() != "") {
+            $providers['facebook'] = $user->getFacebookId();
+        }
+
+        if($user->getGoogleId() != null || $user->getGoogleId() != "") {
+            $providers['google'] = $user->getGoogleId();
+        }
+
+        if($user->getLinkedinId() != null || $user->getLinkedinId() != "") {
+            $providers['linkedin'] = $user->getLinkedinId();
+        }
+
+        $view = $this->makeView(
+            200,
+            ['provider' => $providers],
+            [],
+            true
+        );
+
+        return $this->handleView($view);
+    }
+
+    /**
+     * Link social network account
+     */
+    public function postUserLinkAction(Request $request, $id, $slug)
+    {
+        $user = $this->get('user_repository')->find($id);
+        $this->exist($user);
+
+        if (false === $this->get('security.context')->isGranted('OWNER', $user)) {
+            $this->permissionDenied();
+        }
+
+        $view = $this->view();
+
+        if(false == in_array($slug, ['facebook', 'google', 'linkedin'])) {
+            $code = 400;
+            $this->meta->setError('unknown_provider')
+                       ->setErrorMessage('Provider specified doesn\'t exist')
+            ;
+            $view->setData(['meta' => $this->meta->build()])
+                 ->setStatusCode($code)
+            ;
+            return $this->handleView($view);
+        }
+
+        $decoded = json_decode($request->getContent());
+        $accessToken = $decoded->access_token;
+
+        $httpClient = $this->get('guzzle.client');
+        switch($slug) {
+        case 'facebook':
+            $request = $httpClient->get('https://graph.facebook.com/v2.0/me?access_token='.$accessToken);
+            try {
+                $request->send();
+            } catch (\Exception $e){
+                $code = 400;
+                $this->meta->setError('wrong_access_token')
+                           ->setErrorMessage('Provided access_token is incorrect or expired')
+                ;
+                $view->setData($this->meta->build())
+                     ->setStatusCode($code)
+                ;
+                return $this->handleView($view);
+            }
+            $response = $request->getResponse();
+
+            $json = $response->json();
+            $facebookId = $json['id'];
+
+            $fbUser = $this->get('user_repository')->findByFacebookId($facebookId);
+            if(null != $fbUser) {
+                $code = 422;
+                $this->meta->setError('accout_already_linked')
+                           ->setErrorMessage('Account is already linked')
+                ;
+                $view->setData($this->meta->build())
+                     ->setStatusCode($code)
+                ;
+                return $this->handleView($view);
+            }
+
+            $user->setFacebookId($facebookId);
+            $user->setFacebookAccessToken($accessToken);
+
+            break;
+        case 'google':
+            $request = $httpClient->get('https://www.googleapis.com/plus/v1/people/me?access_token='.$accessToken);
+            try {
+                $request->send();
+            } catch (\Exception $e){
+                $code = 400;
+                $this->meta->setError('wrong_access_token')
+                           ->setErrorMessage('Provided access_token is incorrect or expired')
+                ;
+                $view->setData($this->meta->build())
+                     ->setStatusCode($code)
+                ;
+                return $this->handleView($view);
+            }
+            $response = $request->getResponse();
+
+            $json = $response->json();
+            $googleId = $json['id'];
+
+            $googleUser = $this->get('user_repository')->findByGoogleId($googleId);
+            if(null != $googleUser) {
+                $code = 422;
+                $this->meta->setError('accout_already_linked')
+                           ->setErrorMessage('Account is already linked')
+                ;
+                $view->setData($this->meta->build())
+                     ->setStatusCode($code)
+                ;
+                return $this->handleView($view);
+            }
+
+            $user->setGoogleId($googleId);
+            $user->setGoogleAccessToken($accessToken);
+
+            break;
+        case 'linkedin':
+            $request = $httpClient->get('https://api.linkedin.com/v1/people/~:(id,email-address)?format=json&oauth2_access_token='.$accessToken);
+            try {
+                $request->send();
+            } catch (\Exception $e){
+                $code = 400;
+                $this->meta->setError('wrong_access_token')
+                           ->setErrorMessage('Provided access_token is incorrect or expired')
+                ;
+                $view->setData($this->meta->build())
+                     ->setStatusCode($code)
+                ;
+                return $this->handleView($view);
+            }
+            $response = $request->getResponse();
+
+            $json = $response->json();
+            $linkedinId = $json['id'];
+
+            $linkedinUser = $this->get('user_repository')->findByLinkedinId($linkedinId);
+            if(null != $linkedinUser) {
+                $code = 422;
+                $this->meta->setError('accout_already_linked')
+                           ->setErrorMessage('Account is already linked')
+                ;
+                $view->setData($this->meta->build())
+                     ->setStatusCode($code)
+                ;
+                return $this->handleView($view);
+            }
+
+            $user->setLinkedinId($linkedinId);
+            $user->setLinkedinAccessToken($accessToken);
+
+            break;
+        }
+
+        $this->get('user_repository')->update($user);
+
+        $code = 201;
+        $view->setStatusCode($code)
+        ;
+
+        return $this->handleView($view);
+    }
+
+    /**
+     * Unlink social network account
+     */
+    public function deleteUserLinkAction($id, $slug)
+    {
+        $user = $this->get('user_repository')->find($id);
+        $this->exist($user);
+
+        if (false === $this->get('security.context')->isGranted('OWNER', $user)) {
+            $this->permissionDenied();
+        }
+
+        $view = $this->view();
+
+        if(false == in_array($slug, ['facebook', 'google', 'linkedin'])) {
+            $code = 400;
+            $this->meta->setError('unknown_provider')
+                       ->setErrorMessage('Provider specified doesn\'t exist')
+            ;
+            $view->setData(['meta' => $this->meta->build()])
+                 ->setStatusCode($code)
+            ;
+            return $this->handleView($view);
+        }
+
+        switch($slug) {
+        case 'facebook':
+            $user->setFacebookId('');
+            $user->setFacebookAccessToken('');
+            break;
+        case 'google':
+            $user->setGoogleId('');
+            $user->setGoogleAccessToken('');
+            break;
+        case 'linkedin':
+            $user->setLinkedinId('');
+            $user->setLinkedinAccessToken('');
+            break;
+        }
+
+        $this->get('user_repository')->update($user);
+
+        $code = 204;
+        $view->setStatusCode($code)
         ;
 
         return $this->handleView($view);
