@@ -128,10 +128,10 @@ pq_rate_limit:
         #- { path: ^/api/v1/users, method: ['POST'], limit: 1, time: 3600, captcha: true }
 
 cspoo_swiftmailer_mailgun:
-    key: key-6x9z6r91d9nhnjetj65hmb0ckftniwc6
-    domain: sandbox6529c37d76f547afb23f86144351cb95.mailgun.org
+    key: %mailgun.key% 
+    domain: %mailgun.domain%
 
 recaptcha:
-    public_key: 6LfIZvMSAAAAALJ-linwr9yxy1eTlwTDYOaiPU_A
-    private_key: 6LfIZvMSAAAAABef7WkJT001DGmw5xj5SJDeKAlz
+    public_key: %recaptcha.publickey%
+    private_key: %recaptcha.privatekey%
     use_https: false # optional
