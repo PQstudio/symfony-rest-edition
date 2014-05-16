@@ -1,15 +1,18 @@
 parameters:
-    database_driver:   pdo_mysql
-    database_host:     127.0.0.1
-    database_port:     ~
-    database_name:     symfony
-    database_user:     root
-    database_password: ~
+    database_driver: pdo_mysql
+    database_host: 127.0.0.1
+    database_port: null
+    database_name: mojlek-api
+    database_user: mojlek-api
+    database_password: 
+    mailer_transport: mailgun
+    locale: pl
+    secret: not_secret
 
-    mailer_transport:  smtp
-    mailer_host:       127.0.0.1
-    mailer_user:       ~
-    mailer_password:   ~
+    mailer.from: kontakt@praceon.pl
+    mailer.fromName: PraceOn
+    mailgun.key: insert_key
+    mailgun.domain: insert_domain
 
-    locale:            en
-    secret:            ThisTokenIsNotSoSecretChangeIt
+    recaptcha.publickey: insert_publickey
+    recaptcha.privatekey: insert_privatekey
