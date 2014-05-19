@@ -62,6 +62,25 @@ class DoctrineUserRepository
         return $count;
     }
 
+    public function findAccessTokenByUser($user)
+    {
+        $query = $this->em->createQuery(
+           'SELECT p
+            FROM PQ\CoreDomain\OAuthBundle\Entity\AccessToken p
+            WHERE p.user = :user
+            ORDER BY p.id DESC
+            '
+        )->setParameter('user', $user->getId());
+
+        $accessTokens = $query->getResult();
+        $accessToken = null;
+        if(!empty($accessTokens)) {
+            $accessToken = $accessTokens[0];
+        }
+
+        return $accessToken;
+    }
+
     public function findByConfirmationToken($token)
     {
         $query = $this->em->createQuery(

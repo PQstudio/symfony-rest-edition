@@ -1,0 +1,22 @@
+PQ\CoreDomain\UserBundle\Entity\Notification:
+    exclusion_policy: ALL
+    properties:
+        id:
+            expose: true
+            type: integer
+            groups: [GET, PATCH]
+        type:
+            expose: true
+            serialized_name: type
+            type: string
+            groups: [GET]
+        isRead:
+            expose: true
+            serialized_name: isRead
+            type: boolean
+            groups: [GET, PATCH]
+        message:
+            expose: true
+            serialized_name: message
+            type: string
+            groups: [GET]

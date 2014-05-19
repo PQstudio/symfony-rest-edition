@@ -86,6 +86,7 @@ class User extends BaseUser
 
     protected $currentPassword;
 
+
     public function __construct()
     {
         parent::__construct();

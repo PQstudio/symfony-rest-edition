@@ -21,6 +21,11 @@ class UserController extends PQRestController
      */
     public function getUsersAction(Request $request)
     {
+        $user = $this->get('security.context')->getToken()->getUser();
+        $this->exist($user);
+
+        $this->get('event_dispatcher')->dispatch(UserEvents::EmailChange, new UserEvent($user));
+        die;
         if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
             $this->permissionDenied();
         }
@@ -404,6 +409,70 @@ class UserController extends PQRestController
         $view->setData(['meta' => $this->meta->build()])
              ->setStatusCode($code)
         ;
+
+        return $this->handleView($view);
+    }
+
+    /**
+     * Get user notifications
+     */
+    public function getUsersNotificationsAction(Request $request, $id)
+    {
+        $user = $this->get('user_repository')->find($id);
+        $this->exist($user);
+
+        if (false === $this->get('security.context')->isGranted('OWNER', $user)) {
+            $this->permissionDenied();
+        }
+        $this->setOffsetAndLimit($request);
+
+        $notifications = $this->get('notification_repository')->findAllForUser($user, null, $this->limit, $this->offset);
+        $count = $this->get('notification_repository')->findAllForUserCount($user, null);
+
+        $notReadCount = $this->get('notification_repository')->findAllNotReadForUserCount($user, null);
+
+        $this->meta->setCount($count);
+
+        $meta = $this->meta->build();
+        $meta['notReadCount'] = $notReadCount;
+
+        $view = $this->makeView(
+            200,
+            ['meta' => $meta, 'notifications' => $notifications],
+            ['GET'],
+            false
+        );
+
+        return $this->handleView($view);
+    }
+
+    public function patchNotificationAction(Request $request, $id)
+    {
+        $notification = $this->get('notification_repository')->find($id);
+        $this->exist($notification);
+
+        if (false === $this->get('security.context')->isGranted('EDIT', $notification)) {
+            $this->permissionDenied();
+        }
+
+        $notification = $this->deserialize(
+            $request->getContent(),
+            $this->container->getParameter('notification_entity'),
+            ['PATCH'],
+            [],
+            $id
+        );
+
+        $view = $this->view();
+
+        $this->get('notification_repository')->update($notification);
+
+        $view = $this->makeView(
+            204,
+            ['meta' => $this->meta->build()],
+            [],
+            true
+        );
 
         return $this->handleView($view);
     }

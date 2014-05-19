@@ -3,6 +3,10 @@ parameters:
     user_repository.doctrine.class: PQ\CoreDomain\UserBundle\Repository\User\DoctrineUserRepository
     user_entity: PQ\CoreDomain\UserBundle\Entity\User
 
+    notification_repository.doctrine.bare.class: PQ\CoreDomain\UserBundle\Repository\Notification\BareDoctrineNotificationRepository
+    notification_repository.doctrine.class: PQ\CoreDomain\UserBundle\Repository\Notification\DoctrineNotificationRepository
+    notification_entity: PQ\CoreDomain\UserBundle\Entity\Notification
+
 services:
 # User repository
     user_repository.doctrine:
@@ -23,3 +27,21 @@ services:
         factory_service: "doctrine.orm.entity_manager"
         factory_method: "getRepository"
         arguments: [%user_entity%]
+
+# Notification repository
+    notification_repository.doctrine:
+        class: %notification_repository.doctrine.class%
+        arguments: 
+            em: "@doctrine.orm.entity_manager"
+            repo: "@notification_repository.doctrine.bare"
+            acl: "@pq.acl"
+            notificationEntity: %notification_entity%
+
+    notification_repository:
+        alias: notification_repository.doctrine
+
+    notification_repository.doctrine.bare:
+        class: %notification_repository.doctrine.bare.class%
+        factory_service: "doctrine.orm.entity_manager"
+        factory_method: "getRepository"
+        arguments: [%notification_entity%]
