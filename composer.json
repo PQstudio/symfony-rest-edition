@@ -26,8 +26,10 @@
         "cspoo/swiftmailer-mailgun-bundle": "dev-master",
         "dmishh/recaptcha-bundle": "1.0.*",
         "misd/guzzle-bundle": "~1.0",
+        "knplabs/knp-gaufrette-bundle": "dev-master",
         "pqstudio/rest-utility-bundle": "dev-master",
-        "pqstudio/rate-limit-bundle": "dev-master"
+        "pqstudio/rate-limit-bundle": "dev-master",
+        "pqstudio/rest-upload-bundle": "dev-master"
     },
     "require-dev": {
     },
