@@ -19,9 +19,11 @@ class AppKernel extends Kernel
             new JMS\AopBundle\JMSAopBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
+            new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
 
             new Snc\RedisBundle\SncRedisBundle(),
             new Misd\GuzzleBundle\MisdGuzzleBundle(),
+            new Knp\Bundle\GaufretteBundle\KnpGaufretteBundle(),
 
             new cspoo\Swiftmailer\MailgunBundle\cspooSwiftmailerMailgunBundle(),
             new Dmishh\Bundle\RecaptchaBundle\RecaptchaBundle(),
@@ -32,6 +34,7 @@ class AppKernel extends Kernel
 
             new PQstudio\RestUtilityBundle\PQstudioRestUtilityBundle(),
             new PQstudio\RateLimitBundle\PQstudioRateLimitBundle(),
+            new PQstudio\RestUploadBundle\PQstudioRestUploadBundle(),
 
             new PQ\CoreDomain\OAuthBundle\PQOAuthBundle(),
             new PQ\CoreDomain\UserBundle\PQUserBundle(),
