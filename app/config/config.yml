@@ -142,3 +142,15 @@ recaptcha:
     public_key: %recaptcha.publickey%
     private_key: %recaptcha.privatekey%
     use_https: false # optional
+
+# KnpGaufrette Configuration
+knp_gaufrette:
+    adapters:
+        tmpfiles_adapter:
+            local:
+                directory:  %kernel.root_dir%/../tmp
+                create:     true
+    filesystems:
+        tmpfiles:
+            adapter: tmpfiles_adapter
+            alias: tmpfiles_filesystem
