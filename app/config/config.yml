@@ -134,6 +134,15 @@ pq_rate_limit:
         #- { path: ^/api/v1/users$, method: ['GET'], limit: 3, time: 3600 }
         #- { path: ^/api/v1/users, method: ['POST'], limit: 1, time: 3600, captcha: true }
 
+pq_rest_upload:
+    types:
+        profile:
+            mimeTypes: ['image/jpeg', 'image/png']
+            maxSize: 2048000
+        #ad:
+            #mimeTypes: ['x-shockwave-flash/swf']
+            #maxSize: 5000000
+
 cspoo_swiftmailer_mailgun:
     key: %mailgun.key% 
     domain: %mailgun.domain%

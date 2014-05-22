@@ -5,6 +5,11 @@ pq_ratelimit:
     resource: "@PQstudioRateLimitBundle/Resources/config/routing.yml"
     prefix: /api/v1
 
+pq_file:
+    type: rest
+    resource: "@PQstudioRestUploadBundle/Resources/config/routing_file.yml"
+    prefix: /api/v1
+
 fos_oauth_server_token:
     resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"
 
@@ -12,3 +17,4 @@ pq_user:
     type: rest
     resource: "@PQUserBundle/Resources/config/routing_user.yml"
     prefix: /api/v1
+

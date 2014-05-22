@@ -21,11 +21,6 @@ class UserController extends PQRestController
      */
     public function getUsersAction(Request $request)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
-        $this->exist($user);
-
-        $this->get('event_dispatcher')->dispatch(UserEvents::EmailChange, new UserEvent($user));
-        die;
         if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
             $this->permissionDenied();
         }
