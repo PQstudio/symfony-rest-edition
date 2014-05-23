@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *     priority = 0
  * )
  **/
-class EmailChangeListener
+class UserChangeListener
 {
     protected $dispatcher;
 
@@ -46,6 +46,10 @@ class EmailChangeListener
 
                 $meta = $em->getClassMetadata(get_class($entity));
                 $uow->recomputeSingleEntityChangeSet($meta, $entity);
+            }
+
+            if($eventArgs->hasChangedField('password')) {
+                $this->dispatcher->dispatch(UserEvents::PasswordChange, new UserEvent($entity));
             }
         }
     }

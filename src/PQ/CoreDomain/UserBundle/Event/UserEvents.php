@@ -14,6 +14,13 @@ final class UserEvents
     const EmailChange = 'pq.user.email.change';
 
     /**
+     * Event occurs after user email has been changed.
+     *
+     * @var string
+     */
+    const PasswordChange = 'pq.user.password.change';
+
+    /**
      * Event after successfull registration
      */
     const Register = 'pq.user.register';

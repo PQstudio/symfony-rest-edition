@@ -51,6 +51,7 @@ class NotificationManager
         if(null != $accessToken && !$accessToken->hasExpired()) {
             $this->redis->publish('user:'.$accessToken->getToken(), json_encode($data));
         }
+
         $this->repo->add($n, $user);
     }
 }

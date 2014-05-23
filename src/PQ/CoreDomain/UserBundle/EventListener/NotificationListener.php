@@ -19,46 +19,54 @@ class NotificationListener implements EventSubscriberInterface
 
     protected $mailer;
 
-    protected $repo;
-
     protected $redis;
 
     protected $userRepository;
 
     protected $notificationManager;
 
+    protected $notificationQuene;
+
     /**
      * @DI\InjectParams({
      *     "mailer" = @DI\Inject("mailer.twig"),
      *     "dispatcher" = @DI\Inject("event_dispatcher"),
-     *     "repo" = @DI\Inject("notification_repository"),
      *     "redis" = @DI\Inject("snc_redis.default"),
      *     "userRepository" = @DI\Inject("user_repository"),
-     *     "notificationManager" = @DI\Inject("notification_manager")
+     *     "notificationManager" = @DI\Inject("notification_manager"),
+     *     "notificationQuene" = @DI\Inject("notification_quene")
      * })
      */
-    public function __construct($mailer, EventDispatcherInterface $dispatcher, $repo, $redis, $userRepository, $notificationManager)
+    public function __construct($mailer, EventDispatcherInterface $dispatcher, $redis, $userRepository, $notificationManager, $notificationQuene)
     {
         $this->dispatcher = $dispatcher;
         $this->mailer = $mailer;
-        $this->repo = $repo;
         $this->redis = $redis;
         $this->userRepository = $userRepository;
         $this->notificationManager = $notificationManager;
+        $this->notificationQuene = $notificationQuene;
     }
 
 
     public static function getSubscribedEvents()
     {
         return array(
-            UserEvents::EmailChange => 'EmailChange',
+            UserEvents::EmailChange => 'emailChange',
+            UserEvents::PasswordChange => 'passwordChange',
         );
     }
 
-    public function EmailChange(UserEvent $event)
+    public function emailChange(UserEvent $event)
     {
         $user = $event->getUser();
 
-        $this->notificationManager->notifyUser($user, "user:event", "lalala");
+        $this->notificationQuene->scheduleNotify($user, "user:changed:email", "email zmieniony, niech to dundel swisnie");
+    }
+
+    public function passwordChange(UserEvent $event)
+    {
+        $user = $event->getUser();
+
+        $this->notificationQuene->scheduleNotify($user, "user:change:password", "Haslo zmienione o nie!!");
     }
 }

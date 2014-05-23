@@ -250,9 +250,7 @@ class UserController extends PQRestController
         $encoderService = $this->get('security.encoder_factory');
         $encoder = $encoderService->getEncoder($user);
 
-        //var_dump($user->getCurrentPassword());die;
-
-        if($user->getCurrentPassword() == null || false === $encoder->isPasswordValid($user->getPassword(), $user->getCurrentPassword(), $user->getSalt())) {
+        if($user->getCurrentPassword() != null && false === $encoder->isPasswordValid($user->getPassword(), $user->getCurrentPassword(), $user->getSalt())) {
             $code = 422;
             $this->meta->setStatusCode($code)
                        ->setError('bad_current_password')
@@ -485,6 +483,10 @@ class UserController extends PQRestController
         }
 
         $providers = [];
+        if($user->getPassword() != null || $user->getPassword() != "") {
+            $providers['password'] = $user->getEmail();
+        }
+
         if($user->getFacebookId() != null || $user->getFacebookId() != "") {
             $providers['facebook'] = $user->getFacebookId();
         }
