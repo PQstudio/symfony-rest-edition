@@ -30,6 +30,11 @@ class User extends BaseUser
     /**
      * @ORM\Column(type="string", nullable=true)
      */
+    protected $type;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
     protected $newEmail;
 
     /**
@@ -91,6 +96,7 @@ class User extends BaseUser
     {
         parent::__construct();
         parent::setUsername(uniqid("u", true));
+        $this->type = "employee";
     }
 
     /**
@@ -115,6 +121,16 @@ class User extends BaseUser
     public function getNewEmail()
     {
         return $this->newEmail;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    public function getType()
+    {
+        return $this->type;
     }
 
     public function setCurrentPassword($password)

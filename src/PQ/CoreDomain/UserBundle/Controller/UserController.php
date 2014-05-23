@@ -478,6 +478,10 @@ class UserController extends PQRestController
         $user = $this->get('user_repository')->find($id);
         $this->exist($user);
 
+        if('employee' != $user->getType()) {
+            $this->permissionDenied();
+        }
+
         if (false === $this->get('security.context')->isGranted('OWNER', $user)) {
             $this->permissionDenied();
         }
@@ -516,6 +520,10 @@ class UserController extends PQRestController
     {
         $user = $this->get('user_repository')->find($id);
         $this->exist($user);
+
+        if('employee' != $user->getType()) {
+            $this->permissionDenied();
+        }
 
         if (false === $this->get('security.context')->isGranted('OWNER', $user)) {
             $this->permissionDenied();
@@ -662,6 +670,10 @@ class UserController extends PQRestController
     {
         $user = $this->get('user_repository')->find($id);
         $this->exist($user);
+
+        if('employee' != $user->getType()) {
+            $this->permissionDenied();
+        }
 
         if (false === $this->get('security.context')->isGranted('OWNER', $user)) {
             $this->permissionDenied();

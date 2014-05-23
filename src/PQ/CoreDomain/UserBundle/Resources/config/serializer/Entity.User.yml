@@ -10,3 +10,8 @@ PQ\CoreDomain\UserBundle\Entity\User:
             serialized_name: currentPassword
             type: string
             groups: [PATCH]
+        type:
+            expose: true
+            serialized_name: type
+            type: string
+            groups: [GET, POST]

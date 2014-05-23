@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 use JMS\DiExtraBundle\Annotation as DI;
 
-
 /**
  * @DI\Service("notification_response.listener")
  */

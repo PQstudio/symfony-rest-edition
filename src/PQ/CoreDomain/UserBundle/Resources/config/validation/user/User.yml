@@ -1,4 +1,8 @@
-#PQ\CoreDomain\UserBundle\Entity\User:
-    #properties:
-        #plainPassword:
-            #errorPath: password
+PQ\CoreDomain\UserBundle\Entity\User:
+    properties:
+        type:
+            - NotBlank: ~
+            - Choice:
+                groups: [Default, Profile]
+                choices:  [employee, employer]
+                message: "pq_user.type.not_matched"
