@@ -38,11 +38,9 @@ class UserChangeListener
 
         if($entity instanceof User) {
             if($eventArgs->hasChangedField('email')) {
-                if(!$eventArgs->hasChangedField('newEmail')) {
-                    $eventArgs->setNewValue('email', $eventArgs->getOldValue('email'));
-                    $entity->setNewEmail($entity->getEmail());
-                    $this->dispatcher->dispatch(UserEvents::EmailChange, new UserEvent($entity));
-                }
+                $entity->setOldEmail($eventArgs->getOldValue('email'));
+                $entity->setEnabled(false);
+                $this->dispatcher->dispatch(UserEvents::EmailChange, new UserEvent($entity));
 
                 $meta = $em->getClassMetadata(get_class($entity));
                 $uow->recomputeSingleEntityChangeSet($meta, $entity);

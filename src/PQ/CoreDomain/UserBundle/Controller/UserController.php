@@ -274,42 +274,79 @@ class UserController extends PQRestController
         return $this->handleView($view);
     }
 
-    //public function postUsersConfirmationAction(Request $request)
-    //{
-        //$token = $request->request->get('token');
-        //$user = $this->get('user_repository')->findByConfirmationToken($token);
+    public function putUsersConfirmemailAction(Request $request)
+    {
+        $token = $request->query->get('token');
 
-        //$view = $this->view();
+        $user = $this->get('user_repository')->findByConfirmationToken($token);
 
-        //if(!$user instanceof User) {
-            //$code = 400;
-            //$this->meta->setStatusCode($code)
-                       //->setError('token_not_correct')
-                       //->setErrorMessage('Token is not correct')
-            //;
-            //$view->setData(['meta' => $this->meta->build()])
-                 //->setStatusCode($code)
-            //;
-            //return $this->handleView($view);
-        //}
+        $view = $this->view();
 
-        //$user->setConfirmationToken(null);
-        //$user->setEnabled(true);
-        //if($user->getNewEmail() !== null) {
-            //$user->setEmail($user->getNewEmail());
-            //$user->setNewEmail(null);
-        //}
+        if(!$user instanceof User) {
+            $code = 422;
+            $this->meta->setError('token_not_correct')
+                       ->setErrorMessage('Token is not correct')
+            ;
+            $view->setData($this->meta->build())
+                 ->setStatusCode($code)
+            ;
+            return $this->handleView($view);
+        }
 
-        //$this->get('user_repository')->update($user);
+        $user->setConfirmationToken(null);
+        $user->setEnabled(true);
 
-        //$code = 204;
-        //$this->meta->setStatusCode($code);
-        //$view->setData(['meta' => $this->meta->build()])
-             //->setStatusCode($code)
-        //;
+        $this->get('user_repository')->update($user);
 
-        //return $this->handleView($view);
-    //}
+        $code = 204;
+        $this->meta->setStatusCode($code);
+        $view->setData($this->meta->build())
+             ->setStatusCode($code)
+        ;
+
+        return $this->handleView($view);
+    }
+
+    public function putUsersResendemailAction(Request $request, $id)
+    {
+        $user = $this->get('user_repository')->find($id);
+        $this->exist($user);
+
+        if (false === $this->get('security.context')->isGranted('OWNER', $user)) {
+            $this->permissionDenied();
+        }
+
+        $view = $this->view();
+
+        if($user->getConfirmationToken() == null) {
+            $code = 422;
+            $this->meta->setError('email_already_confirmed')
+                       ->setErrorMessage('Email is already confirmed')
+            ;
+            $view->setData($this->meta->build())
+                 ->setStatusCode($code)
+            ;
+            return $this->handleView($view);
+        }
+
+        $user->setConfirmationToken($this->get('fos_user.util.token_generator')->generateToken());
+
+        $this->get('user_repository')->update($user);
+
+        $templateName = "PQUserBundle:User:confirmEmail.email.twig";
+        $data = ['user' => $user];
+        $to = $user->getEmail();
+
+        $this->get('mailer.twig')->send($templateName, $data, $this->container->getParameter('mailer.from'), $to, $this->container->getParameter('mailer.fromName'));
+
+        $code = 204;
+        $this->meta->setStatusCode($code);
+        $view->setData($this->meta->build())
+             ->setStatusCode($code)
+        ;
+
+        return $this->handleView($view);
+    }
 
     //public function postUsersConfirmationGenerateAction(Request $request)
     //{
@@ -679,14 +716,41 @@ class UserController extends PQRestController
             $this->permissionDenied();
         }
 
+        $providers = [];
+
+        if($user->getFacebookId() != null || $user->getFacebookId() != "") {
+            $providers['facebook'] = $user->getFacebookId();
+        }
+
+        if($user->getGoogleId() != null || $user->getGoogleId() != "") {
+            $providers['google'] = $user->getGoogleId();
+        }
+
+        if($user->getLinkedinId() != null || $user->getLinkedinId() != "") {
+            $providers['linkedin'] = $user->getLinkedinId();
+        }
+
         $view = $this->view();
 
-        if(false == in_array($slug, ['facebook', 'google', 'linkedin'])) {
+        if(false == in_array($slug, array_keys($providers))) {
             $code = 400;
             $this->meta->setError('unknown_provider')
                        ->setErrorMessage('Provider specified doesn\'t exist')
             ;
-            $view->setData(['meta' => $this->meta->build()])
+            $view->setData($this->meta->build())
+                 ->setStatusCode($code)
+            ;
+            return $this->handleView($view);
+        }
+
+
+        if(($user->getPassword() == null || $user->getPassword() == "") &&
+           (count($providers) == 1)) {
+            $code = 400;
+            $this->meta->setError('password_not_set')
+                       ->setErrorMessage('Link cannot be deleted when there\'s no password set')
+            ;
+            $view->setData($this->meta->build())
                  ->setStatusCode($code)
             ;
             return $this->handleView($view);

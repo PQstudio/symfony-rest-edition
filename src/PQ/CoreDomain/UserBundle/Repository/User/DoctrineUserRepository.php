@@ -113,7 +113,6 @@ class DoctrineUserRepository
            'SELECT p
             FROM '.$this->userEntity.' p
             WHERE p.email = :email
-            OR p.newEmail = :email
             '
         )->setParameter('email', $email);
 

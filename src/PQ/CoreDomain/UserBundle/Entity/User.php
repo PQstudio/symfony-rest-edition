@@ -35,7 +35,7 @@ class User extends BaseUser
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    protected $newEmail;
+    protected $oldEmail;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -113,14 +113,14 @@ class User extends BaseUser
         parent::setEmail($email);
     }
 
-    public function setNewEmail($email)
+    public function setOldEmail($email)
     {
-        $this->newEmail = $email;
+        $this->oldEmail = $email;
     }
 
-    public function getNewEmail()
+    public function getOldEmail()
     {
-        return $this->newEmail;
+        return $this->oldEmail;
     }
 
     public function setType($type)

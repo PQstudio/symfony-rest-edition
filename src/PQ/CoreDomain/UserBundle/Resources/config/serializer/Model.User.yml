@@ -18,7 +18,7 @@ FOS\UserBundle\Model\User:
             expose: true
             groups: [GET, PATCH, POST]
         enabled:
-            expose: false
+            expose: true
             groups: [GET]
         last_login:
             expose: true
