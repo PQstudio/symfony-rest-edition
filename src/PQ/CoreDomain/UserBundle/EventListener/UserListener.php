@@ -55,7 +55,7 @@ class UserListener implements EventSubscriberInterface
     {
         return array(
             UserEvents::Register => 'confirmEmailAfterRegister',
-            UserEvents::EmailChange => ['confirmEmail'],
+            UserEvents::EmailChange => 'confirmEmail',
         );
     }
 
@@ -81,5 +81,30 @@ class UserListener implements EventSubscriberInterface
         $to = $user->getEmail();
 
         $this->mailer->send($templateName, $data, $this->from, $to, $this->fromName);
+
+        $user->setRevertToken($this->tokenGenerator->generateToken());
+        $user->setRevertTokenDate(new \DateTime('now'));
+
+
+        $templateName = "PQUserBundle:User:revertEmail.email.twig";
+        $data = ['user' => $user];
+        $to = $user->getOldEmail();
+
+        $this->mailer->send($templateName, $data, $this->from, $to, $this->fromName);
     }
+
+    //public function revertEmailToOldAddress(UserEvent $event)
+    //{
+        //$user = $event->getUser();
+
+        //$user->setRevertToken($this->tokenGenerator->generateToken());
+        //$user->setRevertTokenDate(new \DateTime('now'));
+
+
+        //$templateName = "PQUserBundle:User:revertEmail.email.twig";
+        //$data = ['user' => $user];
+        //$to = $user->getOldEmail();
+
+        //$this->mailer->send($templateName, $data, $this->from, $to, $this->fromName);
+    //}
 }

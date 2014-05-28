@@ -307,6 +307,95 @@ class UserController extends PQRestController
         return $this->handleView($view);
     }
 
+    public function putUsersConfirmchangeemailAction(Request $request)
+    {
+        $token = $request->query->get('token');
+
+        $user = $this->get('user_repository')->findByRevertToken($token);
+
+        $view = $this->view();
+
+        if(!$user instanceof User) {
+            $code = 422;
+            $this->meta->setError('token_not_correct')
+                       ->setErrorMessage('Token is not correct')
+            ;
+            $view->setData($this->meta->build())
+                 ->setStatusCode($code)
+            ;
+            return $this->handleView($view);
+        }
+
+        $user->setRevertToken(null);
+        $user->setRevertTokenDate(null);
+        $user->setOldEmail(null);
+
+        $this->get('user_repository')->update($user);
+
+        $code = 204;
+        $view
+             ->setStatusCode($code)
+        ;
+
+        return $this->handleView($view);
+    }
+
+    public function putUsersRevertemailAction(Request $request)
+    {
+        $token = $request->query->get('token');
+
+        $user = $this->get('user_repository')->findByRevertToken($token);
+
+        $view = $this->view();
+
+        if(!$user instanceof User) {
+            $code = 422;
+            $this->meta->setError('token_not_correct')
+                       ->setErrorMessage('Token is not correct')
+            ;
+            $view->setData($this->meta->build())
+                 ->setStatusCode($code)
+            ;
+            return $this->handleView($view);
+        }
+
+        $date = new \DateTime('now');
+        $date->modify('-72 hours');
+        if($user->getRevertTokenDate() <= $date) {
+            $code = 422;
+            $this->meta->setError('token_time_expired')
+                       ->setErrorMessage('Token time expired')
+            ;
+            $view->setData($this->meta->build())
+                 ->setStatusCode($code)
+            ;
+
+            $user->setRevertToken(null);
+            $user->setRevertTokenDate(null);
+            $user->setOldEmail(null);
+
+            $this->get('user_repository')->update($user);
+
+            return $this->handleView($view);
+        }
+
+        $user->setRevertToken(null);
+        $user->setRevertTokenDate(null);
+        $user->setEmail($user->getOldEmail());
+        $user->setOldEmail(null);
+        $user->setPassword(null);
+        $user->isEmailReverted = true;
+
+        $this->get('user_repository')->update($user);
+
+        $code = 204;
+        $view
+             ->setStatusCode($code)
+        ;
+
+        return $this->handleView($view);
+    }
+
     public function putUsersResendemailAction(Request $request, $id)
     {
         $user = $this->get('user_repository')->find($id);

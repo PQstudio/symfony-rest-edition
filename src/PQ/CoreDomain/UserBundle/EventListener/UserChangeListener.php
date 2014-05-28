@@ -37,7 +37,7 @@ class UserChangeListener
         $uow = $em->getUnitOfWork();
 
         if($entity instanceof User) {
-            if($eventArgs->hasChangedField('email')) {
+            if($eventArgs->hasChangedField('email') && $entity->isEmailReverted == false) {
                 $entity->setOldEmail($eventArgs->getOldValue('email'));
                 $entity->setEnabled(false);
                 $this->dispatcher->dispatch(UserEvents::EmailChange, new UserEvent($entity));

@@ -1,0 +1,16 @@
+{% block subject %}
+{% autoescape false %}Adres email uwaga bo zmieniony{% endautoescape %}
+{% endblock %}
+
+{% block body_text %}
+{% autoescape false %}
+{% endautoescape %}
+{% endblock %}
+
+{% block body_html %}
+email: {{user.oldEmail}} <br />
+jak nie zmieniales, to resetnij tokenem. <br />
+jak zmieniales, to potwierdz tokenem. <br />
+token: {{user.revertToken}} <br /><br />
+po 72h wszystko zniknie
+{% endblock %}

@@ -37,8 +37,7 @@ class TwigMailer
             ->setTo($to);
 
         if (!empty($htmlBody)) {
-            $message->setBody($htmlBody, 'text/html')
-                ->addPart($textBody, 'text/plain');
+            $message->setBody($htmlBody, 'text/html');
         } else {
             $message->setBody($textBody);
         }

@@ -48,6 +48,16 @@ class User extends BaseUser
     protected $changePassTokenDate;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $revertToken;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $revertTokenDate;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="facebook_id", type="string", nullable=true)
@@ -91,12 +101,14 @@ class User extends BaseUser
 
     protected $currentPassword;
 
+    public $isEmailReverted;
 
     public function __construct()
     {
         parent::__construct();
         parent::setUsername(uniqid("u", true));
         $this->type = "employee";
+        $this->isEmailReverted = false;
     }
 
     /**
@@ -161,6 +173,26 @@ class User extends BaseUser
     public function getChangePassTokenDate()
     {
         return $this->changePassTokenDate;
+    }
+
+    public function setRevertToken($token)
+    {
+        $this->revertToken = $token;
+    }
+
+    public function getRevertToken()
+    {
+        return $this->revertToken;
+    }
+
+    public function setRevertTokenDate($tokenDate)
+    {
+        $this->revertTokenDate = $tokenDate;
+    }
+
+    public function getRevertTokenDate()
+    {
+        return $this->revertTokenDate;
     }
 
     public function setFacebookId($facebookId)

@@ -94,6 +94,19 @@ class DoctrineUserRepository
         return $user;
     }
 
+    public function findByRevertToken($token)
+    {
+        $query = $this->em->createQuery(
+           'SELECT p
+            FROM '.$this->userEntity.' p
+            WHERE p.revertToken = :token
+            '
+        )->setParameter('token', $token);
+
+        $user = $query->getOneOrNullResult();
+        return $user;
+    }
+
     public function findByChangePassToken($token)
     {
         $query = $this->em->createQuery(
